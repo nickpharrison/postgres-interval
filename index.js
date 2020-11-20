@@ -9,9 +9,10 @@ function PostgresInterval (raw) {
     return new PostgresInterval(raw)
   }
   if (typeof raw === 'object' && raw !== null) {
-    properties.forEach((property) => {
-      this[property] = isNaN(raw[property]) ? 0 : parseInt(raw[property])
+    properties.slice().reverse().forEach((property) => {
+      this[property] = Number.isInteger(raw[property]) ? parseInt(raw[property]) : 0
     })
+    this.milliseconds = isNaN(raw.milliseconds) ? 0 : parseFloat(raw.milliseconds)
   } else {
     Object.assign(this, parse(raw))
   }
