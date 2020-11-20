@@ -2,14 +2,21 @@
 
 module.exports = PostgresInterval
 
+const properties = ['seconds', 'minutes', 'hours', 'days', 'months', 'years']
+
 function PostgresInterval (raw) {
   if (!(this instanceof PostgresInterval)) {
     return new PostgresInterval(raw)
   }
-
-  Object.assign(this, parse(raw))
+  if (typeof raw === 'object' && raw !== null) {
+    properties.forEach((property) => {
+      this[property] = isNaN(raw[property]) ? 0 : parseInt(raw[property])
+    })
+  } else {
+    Object.assign(this, parse(raw))
+  }
 }
-const properties = ['seconds', 'minutes', 'hours', 'days', 'months', 'years']
+
 PostgresInterval.prototype.toPostgres = function () {
   const filtered = properties.filter(key => Object.prototype.hasOwnProperty.call(this, key) && this[key] !== 0)
 
